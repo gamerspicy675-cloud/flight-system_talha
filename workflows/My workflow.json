@@ -1,0 +1,106 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b52fa527-e77f-4acb-9886-2b1c29e22610",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  b.id AS booking_id,\n  b.passenger_name,\n  b.passenger_email,\n  b.travel_class,\n  f.flight_number,\n  f.origin,\n  f.destination,\n  f.departure_time\nFROM bookings b\nJOIN flights f ON b.flight_id = f.id\nWHERE b.status = 'CONFIRMED'\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "7dd2fc6b-c054-4908-ba43-fd3879ac727f",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "5M1MEEM5VMdg9ngF",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.passenger_email }}",
+        "subject": "=Flight Check-in Reminder: {{ $json.flight_number }} to {{ $json.destination }}",
+        "message": "=<p>Dear <b>{{ $json.passenger_name }}</b>,</p>\n\n<p>This is a reminder that your flight <b>{{ $json.flight_number }}</b> from <b>{{ $json.origin }}</b> to <b>{{ $json.destination }}</b> departs at <b>{{ $json.departure_time }}</b>.</p>\n\n<p><b>Class:</b> {{ $json.travel_class }}</p>\n\n<p>Online check-in is now open. Please have your travel documents ready upon arrival at the gate.</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "97b89a61-74f0-4776-8deb-0ae7ec22baf1",
+      "name": "Send a message",
+      "webhookId": "95ffa6fc-07c6-444b-8068-4706b4f985eb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5M4KyOaUmPwrhDyz",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "111470de-ed33-4f63-9397-0aaf3c85dc92",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "764528fb61753f78ef2755690ccbb7f88a0e9b32feea5ef14cf6746d0d316f4c"
+  },
+  "nodeGroups": [],
+  "id": "k8KILeKM4WNVjb6S",
+  "tags": []
+}

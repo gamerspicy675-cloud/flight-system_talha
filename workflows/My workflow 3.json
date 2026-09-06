@@ -1,0 +1,107 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtMinute": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "71e3394c-f6b0-49c6-8221-dd2f6d888a0e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT b.id AS booking_id, b.passenger_name, b.passenger_email, b.total_paid, b.fare_type\nFROM bookings b\nWHERE b.status = 'CANCELLED'\n  AND NOT EXISTS (\n    SELECT 1 FROM audit_logs a \n    WHERE a.entity_id = b.id AND a.action = 'REFUND_HUMAN_REVIEWED'\n  )\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "9091ffef-bccf-4267-a765-7f09ec7b05ae",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "5M1MEEM5VMdg9ngF",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "gullshaheer@gmail.com",
+        "subject": "=Approval Required: Refund for {{ $json.passenger_name }} (Booking {{ $json.booking_id }})",
+        "message": "=<h3>FlightOps Escalated Refund Request</h3>\n<p>A passenger refund request has been escalated for manual supervisor approval per fare rules.</p>\n\n<table border=\"1\" cellpadding=\"8\" cellspacing=\"0\" style=\"border-collapse: collapse; font-family: sans-serif;\">\n  <tr>\n    <td><b>Booking ID</b></td>\n    <td><code>{{ $json.booking_id }}</code></td>\n  </tr>\n  <tr>\n    <td><b>Passenger Name</b></td>\n    <td>{{ $json.passenger_name }}</td>\n  </tr>\n  <tr>\n    <td><b>Passenger Email</b></td>\n    <td>{{ $json.passenger_email }}</td>\n  </tr>\n  <tr>\n    <td><b>Fare Type</b></td>\n    <td>{{ $json.fare_type }}</td>\n  </tr>\n  <tr>\n    <td><b>Total Paid / Refund Target</b></td>\n    <td><b>${{ $json.total_paid }}</b></td>\n  </tr>\n</table>\n\n<p style=\"margin-top: 16px;\">\n  Please select <b>Approve</b> or <b>Disapprove</b> below to record this audit decision in the database.\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "9ab3a68c-2d99-45f6-a647-779bcda93afb",
+      "name": "Send message and wait for response",
+      "webhookId": "8c65d6b7-5f87-4163-8290-ad4276113c7b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5M4KyOaUmPwrhDyz",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7d92ded1-485e-4a17-a1b6-3cc397c27d0f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "764528fb61753f78ef2755690ccbb7f88a0e9b32feea5ef14cf6746d0d316f4c"
+  },
+  "nodeGroups": [],
+  "id": "u4IIus7U6XcOQlqd",
+  "tags": []
+}
