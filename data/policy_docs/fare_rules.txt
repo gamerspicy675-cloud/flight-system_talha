@@ -1,0 +1,22 @@
+FARE POLICY: BASIC_ECONOMY
+- Non-refundable. No refunds or travel credits will be issued upon passenger cancellation.
+- Seat selection is assigned at check-in.
+- Hold duration is strictly limited to 10 minutes.
+- Flight schedule changes made by the airline qualify for free rebooking or travel vouchers.
+
+FARE POLICY: FLEXIBLE
+- Cancellations permitted up to 2 hours before departure.
+- Passenger cancellations yield a 90% travel credit voucher (10% administrative processing fee).
+- Free seat rebooking and date adjustments allowed once per ticket.
+- Hold duration is 20 minutes.
+
+FARE POLICY: REFUNDABLE
+- 100% monetary refund to original payment method upon cancellation prior to departure.
+- Priority check-in and complimentary seat selection in First/Business cabins.
+- Full compensation eligibility under denied-boarding or airline cancellation guidelines.
+- Hold duration is 30 minutes.
+
+AIRLINE COMPENSATION AND DELAYS
+- Delays > 3 hours: meal vouchers provided at airport service desks.
+- Delays > 6 hours or overnight cancellations: airline-provided hotel accommodations plus complimentary rebooking.
+- Involuntary denied boarding: 100% refund plus $400 statutory travel credit.

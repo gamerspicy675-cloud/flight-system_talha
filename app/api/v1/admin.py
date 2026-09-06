@@ -1,0 +1,1 @@
+"""Administrative flight-management endpoints."""
